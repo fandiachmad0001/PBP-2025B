@@ -128,51 +128,50 @@ if ($total_terjual > 0) {
 $teks_rank_terlaris    = !empty($rank_terlaris_list) ? implode(', ', $rank_terlaris_list) : 'Belum ada data terjual';
 $teks_rentang_terlaris = !empty($rentang_terlaris_list) ? implode(', ', $rentang_terlaris_list) : 'Belum ada data terjual';
 
-// Proses Export ke .xls
-if (isset($_GET['export']) && $_GET['export'] === 'xls') {
-    $filename = "statistik_mlbb_" . date("Y-m-d") . ".xls";
-    header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+// Proses Export ke .csv
+if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+    $filename = "statistik_mlbb_" . date("Y-m-d") . ".csv";
+    header("Content-Type: text/csv; charset=utf-8");
     header("Content-Disposition: attachment; filename=\"$filename\"");
     header("Pragma: no-cache");
     header("Expires: 0");
 
-    echo "\xEF\xBB\xBF";
-    echo "<table border='1'>";
-    echo "<tr><th colspan='2'>RINGKASAN STATISTIK MLBB</th></tr>";
-    echo "<tr><td>Akun Tersedia</td><td>" . (int) $total_tersedia . "</td></tr>";
-    echo "<tr><td>Akun Terjual</td><td>" . (int) $total_terjual . "</td></tr>";
-    echo "<tr><td>Jenis Akun Paling Laku</td><td>" . htmlspecialchars($teks_rank_terlaris, ENT_QUOTES, 'UTF-8') . "</td></tr>";
-    echo "<tr><td>Rentang Harga Sering Laku</td><td>" . htmlspecialchars($teks_rentang_terlaris, ENT_QUOTES, 'UTF-8') . "</td></tr>";
-    echo "</table><br>";
+    $output = fopen("php://output", "w");
+    // UTF-8 BOM agar karakter terbaca rapi di Excel
+    fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-    echo "<table border='1'>";
-    echo "<tr><th colspan='2'>DISTRIBUSI RENTANG HARGA TERJUAL</th></tr>";
-    echo "<tr><th>Rentang Harga</th><th>Jumlah Terjual</th></tr>";
+    fputcsv($output, ['RINGKASAN STATISTIK MLBB']);
+    fputcsv($output, ['Metrik', 'Nilai']);
+    fputcsv($output, ['Akun Tersedia', (int) $total_tersedia]);
+    fputcsv($output, ['Akun Terjual', (int) $total_terjual]);
+    fputcsv($output, ['Jenis Akun Paling Laku', $teks_rank_terlaris]);
+    fputcsv($output, ['Rentang Harga Sering Laku', $teks_rentang_terlaris]);
+    fputcsv($output, []);
+
+    fputcsv($output, ['DISTRIBUSI RENTANG HARGA TERJUAL']);
+    fputcsv($output, ['Rentang Harga', 'Jumlah Terjual']);
     foreach ($frekuensi_rentang_harga as $label_range => $jml_range) {
-        echo "<tr>";
-        echo "<td>" . htmlspecialchars($label_range, ENT_QUOTES, 'UTF-8') . "</td>";
-        echo "<td>" . (int) $jml_range . "</td>";
-        echo "</tr>";
+        fputcsv($output, [$label_range, (int) $jml_range]);
     }
-    echo "</table><br>";
+    fputcsv($output, []);
 
-    echo "<table border='1'>";
-    echo "<tr><th colspan='5'>DETAIL DATA AKUN MLBB</th></tr>";
-    echo "<tr><th>ID</th><th>Judul</th><th>Rank</th><th>Jumlah Skin</th><th>Harga (Rp)</th></tr>";
+    fputcsv($output, ['DETAIL DATA AKUN MLBB']);
+    fputcsv($output, ['ID', 'Judul', 'Rank', 'Jumlah Skin', 'Harga (Rp)']);
 
-    $res_xls = mysqli_query($koneksi, "SELECT id_ml, judul, rank, jumlah_skin, harga FROM ml ORDER BY id_ml DESC");
-    if ($res_xls) {
-        while ($d = mysqli_fetch_assoc($res_xls)) {
-            echo "<tr>";
-            echo "<td>" . (int) $d['id_ml'] . "</td>";
-            echo "<td>" . htmlspecialchars($d['judul'], ENT_QUOTES, 'UTF-8') . "</td>";
-            echo "<td>" . htmlspecialchars($d['rank'], ENT_QUOTES, 'UTF-8') . "</td>";
-            echo "<td>" . (int) $d['jumlah_skin'] . "</td>";
-            echo "<td>" . (float) $d['harga'] . "</td>";
-            echo "</tr>";
+    $res_csv = mysqli_query($koneksi, "SELECT id_ml, judul, rank, jumlah_skin, harga FROM ml ORDER BY id_ml DESC");
+    if ($res_csv) {
+        while ($d = mysqli_fetch_assoc($res_csv)) {
+            fputcsv($output, [
+                (int) $d['id_ml'],
+                $d['judul'],
+                $d['rank'],
+                (int) $d['jumlah_skin'],
+                (float) $d['harga'],
+            ]);
         }
     }
-    echo "</table>";
+
+    fclose($output);
     exit;
 }
 ?>
@@ -251,8 +250,8 @@ if (isset($_GET['export']) && $_GET['export'] === 'xls') {
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <h5 class="fw-bold mb-0">Statistik Penjualan MLBB</h5>
         <div class="d-flex flex-wrap gap-2">
-            <a href="?export=xls" class="btn btn-success btn-sm fw-semibold">
-                Export ke .xls
+            <a href="?export=csv" class="btn btn-success btn-sm fw-semibold">
+                Export ke .csv
             </a>
             <a href="?reset_statistik=1" class="btn btn-outline-danger btn-sm fw-semibold" onclick="return confirm('Yakin ingin mereset perhitungan statistik ini?')">
                 Reset Perhitungan
