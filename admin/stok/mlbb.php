@@ -181,7 +181,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'xls') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="/Amp-Store/bin/logo/logo.png">
+    <link rel="icon" type="image/png" href="../../bin/logo/logo.png">
     <title>AMP STORE - Stok MLBB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.9/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../style.css" rel="stylesheet">
@@ -217,7 +217,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'xls') {
 
         <!-- LOGO DI KIRI -->
         <a href="../index.php" class="navbar-brand logo-link">
-            <img src="/Amp-Store/bin/logo/logo.png" alt="AMP STORE" class="logo-amp">
+            <img src="../../bin/logo/logo.png" alt="AMP STORE" class="logo-amp">
         </a>
         <h1 id="namanav">ADMIN AMP STORE</h1>
 
@@ -339,7 +339,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'xls') {
                 $jumlah_foto  = count($daftar_file);
                 $src_poster   = $gambar_aman !== ''
                     ? "../../bin/img_stok/mlbb/" . $gambar_aman
-                    : "/Amp-Store/bin/logo/logo.png";
+                    : "../../bin/logo/logo.png";
         ?>
         <div class="col">
             <a href="../../item/mlbb/mlbb.php?id=<?= $id_row; ?>" class="card-link-wrapper">

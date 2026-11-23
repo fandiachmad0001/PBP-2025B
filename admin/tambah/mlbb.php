@@ -129,7 +129,7 @@ if (isset($_GET['hapus'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="/Amp-Store/bin/logo/logo.png">
+    <link rel="icon" type="image/png" href="../../bin/logo/logo.png">
     <title>AMP STORE - Admin MLBB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.9/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../style.css" rel="stylesheet">
@@ -142,7 +142,7 @@ if (isset($_GET['hapus'])) {
 
         <!-- LOGO DI KIRI -->
         <a href="../index.php" class="navbar-brand logo-link">
-            <img src="/Amp-Store/bin/logo/logo.png" alt="AMP STORE" class="logo-amp">
+            <img src="../../bin/logo/logo.png" alt="AMP STORE" class="logo-amp">
         </a>
         <h1 id="namanav">ADMIN AMP STORE</h1>
 
